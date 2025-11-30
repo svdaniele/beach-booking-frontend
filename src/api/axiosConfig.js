@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",  // o il tuo URL
+  baseURL: "http://localhost:8080/api",  // o il tuo URL
   withCredentials: true,
 });
 
