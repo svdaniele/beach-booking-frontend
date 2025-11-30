@@ -1,11 +1,8 @@
-import axios from './axios';
+import axiosInstance from './axiosConfig';
 
 const authAPI = {
-  /**
-   * Login utente
-   */
   login: async (email, password) => {
-    const response = await axios.post('/auth/login', {
+    const response = await axiosInstance.post('/auth/login', { // <-- usa axiosInstance
       email,
       password,
     });
@@ -16,7 +13,7 @@ const authAPI = {
    * Registrazione cliente
    */
   registerCustomer: async (data) => {
-    const response = await axios.post('/auth/register/customer', data);
+    const response = await axiosInstance.post('/auth/register/customer', data);
     return response.data;
   },
 
@@ -24,7 +21,7 @@ const authAPI = {
    * Registrazione nuovo tenant (stabilimento)
    */
   registerTenant: async (data) => {
-    const response = await axios.post('/auth/register/tenant', data);
+    const response = await axiosInstance.post('/auth/register/tenant', data);
     return response.data;
   },
 
@@ -32,7 +29,7 @@ const authAPI = {
    * Ottieni utente corrente
    */
   getCurrentUser: async () => {
-    const response = await axios.get('/auth/me');
+    const response = await axiosInstance.get('/auth/me');
     return response.data;
   },
 
@@ -40,7 +37,7 @@ const authAPI = {
    * Logout
    */
   logout: async () => {
-    const response = await axios.post('/auth/logout');
+    const response = await axiosInstance.post('/auth/logout');
     return response.data;
   },
 
@@ -48,7 +45,7 @@ const authAPI = {
    * Richiedi reset password
    */
   forgotPassword: async (email) => {
-    const response = await axios.post('/auth/forgot-password', { email });
+    const response = await axiosInstance.post('/auth/forgot-password', { email });
     return response.data;
   },
 
@@ -56,7 +53,7 @@ const authAPI = {
    * Reset password con token
    */
   resetPassword: async (token, newPassword) => {
-    const response = await axios.post('/auth/reset-password', {
+    const response = await axiosInstance.post('/auth/reset-password', {
       token,
       newPassword,
     });
@@ -67,7 +64,7 @@ const authAPI = {
    * Cambia password (utente autenticato)
    */
   changePassword: async (oldPassword, newPassword, confirmPassword) => {
-    const response = await axios.post('/auth/change-password', {
+    const response = await axiosInstance.post('/auth/change-password', {
       oldPassword,
       newPassword,
       confirmPassword,
@@ -79,7 +76,7 @@ const authAPI = {
    * Verifica email
    */
   verifyEmail: async (token) => {
-    const response = await axios.post('/auth/verify-email', { token });
+    const response = await axiosInstance.post('/auth/verify-email', { token });
     return response.data;
   },
 };

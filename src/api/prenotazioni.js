@@ -1,11 +1,11 @@
-import axios from './axios';
+import axiosInstance from './axiosConfig';
 
 const prenotazioniAPI = {
   /**
    * Crea nuova prenotazione
    */
   create: async (data) => {
-    const response = await axios.post('/prenotazioni', data);
+    const response = await axiosInstance.post('/prenotazioni', data);
     return response.data;
   },
 
@@ -18,7 +18,7 @@ const prenotazioniAPI = {
     if (filters.dataInizio) params.append('dataInizio', filters.dataInizio);
     if (filters.dataFine) params.append('dataFine', filters.dataFine);
     
-    const response = await axios.get(`/prenotazioni?${params.toString()}`);
+    const response = await axiosInstance.get(`/prenotazioni?${params.toString()}`);
     return response.data;
   },
 
@@ -26,7 +26,7 @@ const prenotazioniAPI = {
    * Ottieni le mie prenotazioni
    */
   getMy: async () => {
-    const response = await axios.get('/prenotazioni/me');
+    const response = await axiosInstance.get('/prenotazioni/me');
     return response.data;
   },
 
@@ -34,7 +34,7 @@ const prenotazioniAPI = {
    * Ottieni prenotazioni attive (oggi)
    */
   getActive: async () => {
-    const response = await axios.get('/prenotazioni/active');
+    const response = await axiosInstance.get('/prenotazioni/active');
     return response.data;
   },
 
@@ -42,7 +42,7 @@ const prenotazioniAPI = {
    * Ottieni prenotazione per ID
    */
   getById: async (id) => {
-    const response = await axios.get(`/prenotazioni/${id}`);
+    const response = await axiosInstance.get(`/prenotazioni/${id}`);
     return response.data;
   },
 
@@ -50,7 +50,7 @@ const prenotazioniAPI = {
    * Ottieni prenotazione per codice
    */
   getByCodice: async (codice) => {
-    const response = await axios.get(`/prenotazioni/codice/${codice}`);
+    const response = await axiosInstance.get(`/prenotazioni/codice/${codice}`);
     return response.data;
   },
 
@@ -62,7 +62,7 @@ const prenotazioniAPI = {
       dataInizio,
       dataFine,
     });
-    const response = await axios.get(`/prenotazioni/disponibili?${params.toString()}`);
+    const response = await axiosInstance.get(`/prenotazioni/disponibili?${params.toString()}`);
     return response.data;
   },
 
@@ -70,7 +70,7 @@ const prenotazioniAPI = {
    * Conferma prenotazione (staff)
    */
   confirm: async (id) => {
-    const response = await axios.put(`/prenotazioni/${id}/confirm`);
+    const response = await axiosInstance.put(`/prenotazioni/${id}/confirm`);
     return response.data;
   },
 
@@ -78,7 +78,7 @@ const prenotazioniAPI = {
    * Marca come pagata (staff)
    */
   markAsPaid: async (id) => {
-    const response = await axios.put(`/prenotazioni/${id}/pay`);
+    const response = await axiosInstance.put(`/prenotazioni/${id}/pay`);
     return response.data;
   },
 
@@ -86,7 +86,7 @@ const prenotazioniAPI = {
    * Completa prenotazione (staff)
    */
   complete: async (id) => {
-    const response = await axios.put(`/prenotazioni/${id}/complete`);
+    const response = await axiosInstance.put(`/prenotazioni/${id}/complete`);
     return response.data;
   },
 
@@ -95,7 +95,7 @@ const prenotazioniAPI = {
    */
   cancel: async (id, motivo = '') => {
     const params = motivo ? `?motivo=${encodeURIComponent(motivo)}` : '';
-    const response = await axios.delete(`/prenotazioni/${id}${params}`);
+    const response = await axiosInstance.delete(`/prenotazioni/${id}${params}`);
     return response.data;
   },
 
@@ -103,7 +103,7 @@ const prenotazioniAPI = {
    * Ottieni statistiche
    */
   getStats: async () => {
-    const response = await axios.get('/prenotazioni/stats');
+    const response = await axiosInstance.get('/prenotazioni/stats');
     return response.data;
   },
 };

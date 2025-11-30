@@ -1,11 +1,11 @@
-import axios from './axios';
+import axiosInstance from './axiosConfig';
 
 const ombrelloniAPI = {
   /**
    * Ottieni tutti gli ombrelloni
    */
   getAll: async () => {
-    const response = await axios.get('/ombrelloni');
+    const response = await axiosInstance.get('/ombrelloni');
     return response.data;
   },
 
@@ -13,7 +13,7 @@ const ombrelloniAPI = {
    * Ottieni solo ombrelloni attivi
    */
   getActive: async () => {
-    const response = await axios.get('/ombrelloni/active');
+    const response = await axiosInstance.get('/ombrelloni/active');
     return response.data;
   },
 
@@ -21,7 +21,7 @@ const ombrelloniAPI = {
    * Ottieni ombrellone per ID
    */
   getById: async (id) => {
-    const response = await axios.get(`/ombrelloni/${id}`);
+    const response = await axiosInstance.get(`/ombrelloni/${id}`);
     return response.data;
   },
 
@@ -29,7 +29,7 @@ const ombrelloniAPI = {
    * Ottieni ombrelloni per fila
    */
   getByFila: async (fila) => {
-    const response = await axios.get(`/ombrelloni/fila/${fila}`);
+    const response = await axiosInstance.get(`/ombrelloni/fila/${fila}`);
     return response.data;
   },
 
@@ -37,7 +37,7 @@ const ombrelloniAPI = {
    * Ottieni ombrelloni per tipo
    */
   getByTipo: async (tipo) => {
-    const response = await axios.get(`/ombrelloni/tipo/${tipo}`);
+    const response = await axiosInstance.get(`/ombrelloni/tipo/${tipo}`);
     return response.data;
   },
 
@@ -45,7 +45,7 @@ const ombrelloniAPI = {
    * Crea nuovo ombrellone (solo admin/staff)
    */
   create: async (data) => {
-    const response = await axios.post('/ombrelloni', data);
+    const response = await axiosInstance.post('/ombrelloni', data);
     return response.data;
   },
 
@@ -53,7 +53,7 @@ const ombrelloniAPI = {
    * Crea multipli ombrelloni (batch)
    */
   createBatch: async (ombrelloni) => {
-    const response = await axios.post('/ombrelloni/batch', ombrelloni);
+    const response = await axiosInstance.post('/ombrelloni/batch', ombrelloni);
     return response.data;
   },
 
@@ -61,7 +61,7 @@ const ombrelloniAPI = {
    * Aggiorna ombrellone
    */
   update: async (id, data) => {
-    const response = await axios.put(`/ombrelloni/${id}`, data);
+    const response = await axiosInstance.put(`/ombrelloni/${id}`, data);
     return response.data;
   },
 
@@ -69,7 +69,7 @@ const ombrelloniAPI = {
    * Disattiva ombrellone
    */
   deactivate: async (id) => {
-    const response = await axios.post(`/ombrelloni/${id}/deactivate`);
+    const response = await axiosInstance.post(`/ombrelloni/${id}/deactivate`);
     return response.data;
   },
 
@@ -77,7 +77,7 @@ const ombrelloniAPI = {
    * Attiva ombrellone
    */
   activate: async (id) => {
-    const response = await axios.post(`/ombrelloni/${id}/activate`);
+    const response = await axiosInstance.post(`/ombrelloni/${id}/activate`);
     return response.data;
   },
 
@@ -85,7 +85,7 @@ const ombrelloniAPI = {
    * Elimina ombrellone
    */
   delete: async (id) => {
-    const response = await axios.delete(`/ombrelloni/${id}`);
+    const response = await axiosInstance.delete(`/ombrelloni/${id}`);
     return response.data;
   },
 
@@ -93,7 +93,7 @@ const ombrelloniAPI = {
    * Ottieni statistiche
    */
   getStats: async () => {
-    const response = await axios.get('/ombrelloni/stats/count');
+    const response = await axiosInstance.get('/ombrelloni/stats/count');
     return response.data;
   },
 };
