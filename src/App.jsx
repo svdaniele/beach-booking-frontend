@@ -4,6 +4,8 @@ import BookingPage from './pages/public/BookingPage';
 import DashboardLayout from './pages/dashboard/DashboardLayout';
 import Overview from './pages/dashboard/Overview';
 import MyPrenotazioni from './pages/dashboard/MyPrenotazioni';
+import Prenotazioni from './pages/dashboard/Prenotazioni';
+import Ombrelloni from './pages/dashboard/Ombrelloni';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import useAuthStore from './store/authStore';
 
@@ -14,38 +16,23 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/booking" element={<BookingPage />} />
         
-        {/* Dashboard Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
-          {/* Admin o Customer - route diverse */}
-          <Route
-            index
-            element={isAdmin ? <Overview /> : <MyPrenotazioni />}
-          />
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          <Route index element={isAdmin ? <Overview /> : <MyPrenotazioni />} />
           
-          {/* Admin Routes */}
           {isAdmin && (
             <>
-              <Route path="prenotazioni" element={<div>Prenotazioni Admin - Coming Soon</div>} />
-              <Route path="ombrelloni" element={<div>Ombrelloni - Coming Soon</div>} />
+              <Route path="prenotazioni" element={<Prenotazioni />} />
+              <Route path="ombrelloni" element={<Ombrelloni />} />
               <Route path="clienti" element={<div>Clienti - Coming Soon</div>} />
               <Route path="statistiche" element={<div>Statistiche - Coming Soon</div>} />
               <Route path="impostazioni" element={<div>Impostazioni - Coming Soon</div>} />
             </>
           )}
           
-          {/* Customer Routes */}
           {!isAdmin && (
             <>
               <Route path="nuova-prenotazione" element={<Navigate to="/booking" replace />} />
@@ -54,8 +41,7 @@ function App() {
           )}
         </Route>
         
-        {/* 404 */}
-        <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl">404 - Not Found</h1></div>} />
+        <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl">404</h1></div>} />
       </Routes>
     </div>
   );
