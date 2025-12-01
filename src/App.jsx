@@ -7,6 +7,8 @@ import MyPrenotazioni from './pages/dashboard/MyPrenotazioni';
 import Prenotazioni from './pages/dashboard/Prenotazioni';
 import Ombrelloni from './pages/dashboard/Ombrelloni';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import Clienti from './pages/dashboard/Clienti';
+import Settings from './pages/dashboard/Settings';
 import useAuthStore from './store/authStore';
 
 function App() {
@@ -27,9 +29,9 @@ function App() {
             <>
               <Route path="prenotazioni" element={<Prenotazioni />} />
               <Route path="ombrelloni" element={<Ombrelloni />} />
-              <Route path="clienti" element={<div>Clienti - Coming Soon</div>} />
+              <Route path="clienti" element={<Clienti />} />
               <Route path="statistiche" element={<div>Statistiche - Coming Soon</div>} />
-              <Route path="impostazioni" element={<div>Impostazioni - Coming Soon</div>} />
+              <Route path="impostazioni" element={<Settings />} />
             </>
           )}
           

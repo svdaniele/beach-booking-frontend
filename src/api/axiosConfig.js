@@ -6,4 +6,18 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.tenantId) {
+    config.headers['X-Tenant-ID'] = user.tenantId;
+  }
+  
+  return config;
+});
+
 export default axiosInstance;

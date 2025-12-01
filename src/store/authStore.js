@@ -15,7 +15,7 @@ const useAuthStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const data = await authAPI.login(email, password);
-      
+            
       // Salva in localStorage
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));

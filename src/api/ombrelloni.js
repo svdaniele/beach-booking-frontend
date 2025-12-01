@@ -93,7 +93,7 @@ const ombrelloniAPI = {
    * Ottieni statistiche
    */
   getStats: async () => {
-    const response = await axiosInstance.get('/ombrelloni/stats/count');
+    const response = await axiosInstance.get('/ombrelloni/count');
     return response.data;
   },
 };
