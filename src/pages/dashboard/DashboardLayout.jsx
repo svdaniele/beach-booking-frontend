@@ -1,157 +1,104 @@
 import { useState } from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  FaHome,
-  FaCalendarAlt,
-  FaUmbrella,
-  FaUsers,
-  FaChartBar,
-  FaCog,
-  FaSignOutAlt,
-  FaBars,
-  FaTimes,
-  FaUser,
-} from 'react-icons/fa';
-import useAuthStore from '../../store/authStore';
+import useAuth from '../../hooks/useAuth';
 
-const DashboardLayout = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user, logout } = useAuthStore();
+const DashboardLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { user, logout } = useAuth();
 
-  const isAdmin = ['TENANT_ADMIN', 'SUPER_ADMIN', 'STAFF'].includes(user?.ruolo);
-
-  const adminMenuItems = [
-    { path: '/dashboard', icon: FaHome, label: 'Dashboard' },
-    { path: '/dashboard/prenotazioni', icon: FaCalendarAlt, label: 'Prenotazioni' },
-    { path: '/dashboard/ombrelloni', icon: FaUmbrella, label: 'Ombrelloni' },
-    { path: '/dashboard/clienti', icon: FaUsers, label: 'Clienti' },
-    { path: '/dashboard/statistiche', icon: FaChartBar, label: 'Statistiche' },
-    { path: '/dashboard/impostazioni', icon: FaCog, label: 'Impostazioni' },
+  const menuItems = [
+    { path: '/dashboard', label: 'Dashboard', icon: '📊', roles: ['all'] },
+    { path: '/dashboard/my-prenotazioni', label: 'Le Mie Prenotazioni', icon: '📅', roles: ['CUSTOMER'] },
+    { path: '/dashboard/prenotazioni', label: 'Prenotazioni', icon: '📋', roles: ['STAFF', 'TENANT_ADMIN'] },
+    { path: '/dashboard/ombrelloni', label: 'Ombrelloni', icon: '🏖️', roles: ['STAFF', 'TENANT_ADMIN'] },
+    { path: '/dashboard/clienti', label: 'Clienti', icon: '👥', roles: ['STAFF', 'TENANT_ADMIN'] },
+    { path: '/dashboard/pagamenti', label: 'Pagamenti', icon: '💳', roles: ['STAFF', 'TENANT_ADMIN'] },
+    { path: '/dashboard/settings', label: 'Impostazioni', icon: '⚙️', roles: ['TENANT_ADMIN'] },
+    { path: '/dashboard/profile', label: 'Profilo', icon: '👤', roles: ['all'] },
   ];
 
-  const customerMenuItems = [
-    { path: '/dashboard', icon: FaHome, label: 'Le Mie Prenotazioni' },
-    { path: '/dashboard/nuova-prenotazione', icon: FaCalendarAlt, label: 'Nuova Prenotazione' },
-    { path: '/dashboard/profilo', icon: FaUser, label: 'Profilo' },
-  ];
-
-  const menuItems = isAdmin ? adminMenuItems : customerMenuItems;
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const canAccessMenu = (item) => {
+    if (item.roles.includes('all')) return true;
+    if (user?.ruolo === 'SUPER_ADMIN') return true;
+    return item.roles.includes(user?.ruolo);
   };
 
-  const isActive = (path) => {
-    if (path === '/dashboard') {
-      return location.pathname === '/dashboard';
-    }
-    return location.pathname.startsWith(path);
-  };
+  const visibleMenuItems = menuItems.filter(canAccessMenu);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <motion.aside
-        initial={false}
-        animate={{ width: sidebarOpen ? 256 : 80 }}
-        className="bg-white shadow-lg z-10"
-      >
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="flex items-center justify-between p-4 border-b">
+      <aside className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} relative`}>
+        <div className="p-4 border-b">
+          <div className="flex items-center justify-between">
             {sidebarOpen && (
-              <h1 className="text-xl font-bold text-primary-600">
-                Beach Booking
-              </h1>
+              <div>
+                <h2 className="font-bold text-lg">🏖️ Beach Booking</h2>
+                <p className="text-xs text-gray-500">{user?.nome} {user?.cognome}</p>
+              </div>
             )}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100"
+              className="p-2 hover:bg-gray-100 rounded-lg"
             >
-              {sidebarOpen ? <FaTimes /> : <FaBars />}
-            </button>
-          </div>
-
-          {/* Menu */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.path);
-
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center gap-3 p-3 rounded-lg transition ${
-                    active
-                      ? 'bg-primary-50 text-primary-600 font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  <Icon className="text-xl flex-shrink-0" />
-                  {sidebarOpen && <span>{item.label}</span>}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* User Info & Logout */}
-          <div className="p-4 border-t">
-            <div className={`flex items-center gap-3 mb-3 ${!sidebarOpen && 'justify-center'}`}>
-              <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 font-bold">
-                  {user?.nome?.charAt(0)}
-                </span>
-              </div>
-              {sidebarOpen && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {user?.nomeCompleto}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user?.email}
-                  </p>
-                </div>
-              )}
-            </div>
-            <button
-              onClick={handleLogout}
-              className={`flex items-center gap-3 p-3 rounded-lg text-red-600 hover:bg-red-50 transition w-full ${
-                !sidebarOpen && 'justify-center'
-              }`}
-            >
-              <FaSignOutAlt className="text-xl" />
-              {sidebarOpen && <span>Esci</span>}
+              {sidebarOpen ? '◀' : '▶'}
             </button>
           </div>
         </div>
-      </motion.aside>
+
+        <nav className="p-4 pb-24">
+          <ul className="space-y-2">
+            {visibleMenuItems.map((item) => (
+              <li key={item.path}>
+                <a
+                  href={item.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary-50 hover:text-primary-600 transition-colors ${
+                    window.location.pathname === item.path ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                  }`}
+                >
+                  <span className="text-xl">{item.icon}</span>
+                  {sidebarOpen && <span className="font-medium">{item.label}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="absolute bottom-4 left-4 right-4">
+          <button
+            onClick={() => {
+              logout();
+              window.location.href = '/';
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <span className="text-xl">🚪</span>
+            {sidebarOpen && <span className="font-medium">Logout</span>}
+          </button>
+        </div>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {isAdmin ? 'Gestione Stabilimento' : 'Le Mie Prenotazioni'}
-            </h2>
+      <main className="flex-1 overflow-auto">
+        {/* Top Bar */}
+        <header className="bg-white shadow-sm sticky top-0 z-10">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Benvenuto, {user?.nome}!</h1>
+              <p className="text-sm text-gray-600">{user?.ruolo}</p>
+            </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                {user?.tenantNome || 'Beach Booking'}
-              </span>
+              <a href="/" className="text-gray-600 hover:text-gray-900">
+                🏠 Torna al sito
+              </a>
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          <Outlet />
-        </main>
-      </div>
+        <div className="p-6">
+          {children}
+        </div>
+      </main>
     </div>
   );
 };

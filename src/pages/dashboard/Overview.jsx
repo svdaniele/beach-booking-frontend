@@ -1,22 +1,13 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import {
-  FaCalendarAlt,
-  FaUmbrella,
-  FaUsers,
-  FaEuroSign,
-  FaArrowUp,
-  FaArrowDown,
-  FaClock,
-} from 'react-icons/fa';
 import prenotazioniAPI from '../../api/prenotazioni';
 import ombrelloniAPI from '../../api/ombrelloni';
+import useAuth from '../../hooks/useAuth';
 
 const Overview = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
+  const [prenotazioniRecenti, setPrenotazioniRecenti] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [recentPrenotazioni, setRecentPrenotazioni] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -24,20 +15,15 @@ const Overview = () => {
 
   const loadData = async () => {
     try {
-      const [statsData, ombrelloniStats, prenotazioni] = await Promise.all([
+      const [statsData, prenotazioniData] = await Promise.all([
         prenotazioniAPI.getStats(),
-        ombrelloniAPI.getStats(),
-        prenotazioniAPI.getAll({ limit: 5 }),
+        prenotazioniAPI.getAll({ limit: 5 })
       ]);
-
-      setStats({
-        ...statsData,
-        totalOmbrelloni: ombrelloniStats.totalOmbrelloni,
-        ombrelloniAttivi: ombrelloniStats.ombrelloniAttivi,
-      });
-      setRecentPrenotazioni(prenotazioni.slice(0, 5));
+      
+      setStats(statsData);
+      setPrenotazioniRecenti(prenotazioniData.slice(0, 5));
     } catch (error) {
-      console.error('Error loading stats:', error);
+      console.error('Error loading data:', error);
     } finally {
       setLoading(false);
     }
@@ -45,186 +31,179 @@ const Overview = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex justify-center items-center h-96">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
-  const statCards = [
-    {
-      title: 'Prenotazioni Attive',
-      value: stats?.confirmed || 0,
-      icon: FaCalendarAlt,
-      color: 'bg-blue-500',
-      trend: '+12%',
-      isPositive: true,
-    },
-    {
-      title: 'Ombrelloni',
-      value: `${stats?.ombrelloniAttivi}/${stats?.totalOmbrelloni}`,
-      icon: FaUmbrella,
-      color: 'bg-green-500',
-      subtitle: 'Attivi',
-    },
-    {
-      title: 'Revenue Totale',
-      value: `€${stats?.totalRevenue || 0}`,
-      icon: FaEuroSign,
-      color: 'bg-purple-500',
-      trend: '+8%',
-      isPositive: true,
-    },
-    {
-      title: 'In Attesa',
-      value: stats?.pending || 0,
-      icon: FaClock,
-      color: 'bg-orange-500',
-      subtitle: 'Da confermare',
-    },
-  ];
-
   return (
     <div className="space-y-6">
       {/* Welcome */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Panoramica
-        </h1>
-        <p className="text-gray-600 mt-1">
-          Benvenuto nel pannello di gestione
-        </p>
+      <div className="bg-gradient-to-r from-blue-500 to-cyan-400 rounded-xl p-8 text-white">
+        <h1 className="text-3xl font-bold mb-2">Benvenuto, {user?.nome}! 👋</h1>
+        <p className="text-lg opacity-90">Ecco un riepilogo della tua attività</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((card, idx) => {
-          const Icon = card.icon;
-          return (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`${card.color} w-12 h-12 rounded-lg flex items-center justify-center`}>
-                  <Icon className="text-white text-xl" />
-                </div>
-                {card.trend && (
-                  <span className={`text-sm font-medium flex items-center gap-1 ${
-                    card.isPositive ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {card.isPositive ? <FaArrowUp /> : <FaArrowDown />}
-                    {card.trend}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                {card.value}
-              </h3>
-              <p className="text-sm text-gray-600">{card.title}</p>
-              {card.subtitle && (
-                <p className="text-xs text-gray-500 mt-1">{card.subtitle}</p>
-              )}
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Recent Prenotazioni */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">
-            Prenotazioni Recenti
-          </h3>
-          <Link
-            to="/dashboard/prenotazioni"
-            className="text-primary-600 hover:text-primary-700 font-medium text-sm"
-          >
-            Vedi tutte →
-          </Link>
+      {/* Stats Grid */}
+      <div className="grid md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-gray-600 text-sm">Prenotazioni Oggi</p>
+            <span className="text-2xl">📅</span>
+          </div>
+          <p className="text-3xl font-bold text-primary-600">{stats?.prenotazioniOggi || 0}</p>
         </div>
 
-        {recentPrenotazioni.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">
-            Nessuna prenotazione recente
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-gray-600 text-sm">Ombrelloni Occupati</p>
+            <span className="text-2xl">🏖️</span>
+          </div>
+          <p className="text-3xl font-bold text-green-600">{stats?.ombrelloniOccupati || 0}</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-gray-600 text-sm">Incasso Oggi</p>
+            <span className="text-2xl">💰</span>
+          </div>
+          <p className="text-3xl font-bold text-purple-600">
+            €{(stats?.incassoOggi || 0).toFixed(2)}
           </p>
-        ) : (
-          <div className="space-y-4">
-            {recentPrenotazioni.map((prenotazione) => (
-              <div
-                key={prenotazione.id}
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition"
-              >
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-gray-600 text-sm">Tasso Occupazione</p>
+            <span className="text-2xl">📊</span>
+          </div>
+          <p className="text-3xl font-bold text-blue-600">
+            {stats?.tassoOccupazione || 0}%
+          </p>
+        </div>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Prenotazioni per Stato */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-xl font-bold mb-4">Prenotazioni per Stato</h3>
+          <div className="space-y-3">
+            {[
+              { label: 'Confermate', count: stats?.statiPrenotazioni?.CONFIRMED || 0, color: 'bg-green-500' },
+              { label: 'In Attesa', count: stats?.statiPrenotazioni?.PENDING || 0, color: 'bg-yellow-500' },
+              { label: 'Pagate', count: stats?.statiPrenotazioni?.PAID || 0, color: 'bg-blue-500' },
+              { label: 'Cancellate', count: stats?.statiPrenotazioni?.CANCELLED || 0, color: 'bg-red-500' },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-3">
+                <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="font-semibold text-gray-900">
-                      Ombrellone #{prenotazione.ombrelloneNumero || 'N/A'}
-                    </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      prenotazione.stato === 'PAID'
-                        ? 'bg-green-100 text-green-700'
-                        : prenotazione.stato === 'CONFIRMED'
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-orange-100 text-orange-700'
-                    }`}>
-                      {prenotazione.statoDescrizione}
-                    </span>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm font-medium">{item.label}</span>
+                    <span className="text-sm font-bold">{item.count}</span>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    {prenotazione.dataInizio} - {prenotazione.dataFine}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-gray-900">
-                    €{prenotazione.prezzoTotale}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {prenotazione.codicePrenotazione}
-                  </p>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${item.color}`}
+                      style={{ width: `${(item.count / (stats?.totalePrenotazioni || 1)) * 100}%` }}
+                    ></div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        )}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-xl font-bold mb-4">Azioni Rapide</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <a
+              href="/dashboard/prenotazioni"
+              className="p-4 border-2 border-primary-600 rounded-lg hover:bg-primary-50 text-center"
+            >
+              <div className="text-3xl mb-2">📋</div>
+              <p className="font-semibold text-primary-600">Nuova Prenotazione</p>
+            </a>
+            <a
+              href="/dashboard/ombrelloni"
+              className="p-4 border-2 border-green-600 rounded-lg hover:bg-green-50 text-center"
+            >
+              <div className="text-3xl mb-2">🏖️</div>
+              <p className="font-semibold text-green-600">Gestisci Ombrelloni</p>
+            </a>
+            <a
+              href="/dashboard/clienti"
+              className="p-4 border-2 border-blue-600 rounded-lg hover:bg-blue-50 text-center"
+            >
+              <div className="text-3xl mb-2">👥</div>
+              <p className="font-semibold text-blue-600">Clienti</p>
+            </a>
+            <a
+              href="/dashboard/pagamenti"
+              className="p-4 border-2 border-purple-600 rounded-lg hover:bg-purple-50 text-center"
+            >
+              <div className="text-3xl mb-2">💳</div>
+              <p className="font-semibold text-purple-600">Pagamenti</p>
+            </a>
+          </div>
+        </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <Link
-          to="/dashboard/prenotazioni"
-          className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 hover:shadow-lg transition"
-        >
-          <FaCalendarAlt className="text-3xl mb-3" />
-          <h4 className="font-bold text-lg mb-1">Gestisci Prenotazioni</h4>
-          <p className="text-blue-100 text-sm">
-            Conferma, modifica o cancella prenotazioni
-          </p>
-        </Link>
-
-        <Link
-          to="/dashboard/ombrelloni"
-          className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-6 hover:shadow-lg transition"
-        >
-          <FaUmbrella className="text-3xl mb-3" />
-          <h4 className="font-bold text-lg mb-1">Ombrelloni</h4>
-          <p className="text-green-100 text-sm">
-            Gestisci la mappa e la disponibilità
-          </p>
-        </Link>
-
-        <Link
-          to="/dashboard/clienti"
-          className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6 hover:shadow-lg transition"
-        >
-          <FaUsers className="text-3xl mb-3" />
-          <h4 className="font-bold text-lg mb-1">Clienti</h4>
-          <p className="text-purple-100 text-sm">
-            Visualizza e gestisci i tuoi clienti
-          </p>
-        </Link>
+      {/* Recent Bookings */}
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold">Prenotazioni Recenti</h3>
+          <a href="/dashboard/prenotazioni" className="text-primary-600 hover:text-primary-700 font-medium">
+            Vedi tutte →
+          </a>
+        </div>
+        
+        {prenotazioniRecenti.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Codice</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ombrellone</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stato</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {prenotazioniRecenti.map((p) => (
+                  <tr key={p.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-mono text-sm">{p.codicePrenotazione}</td>
+                    <td className="px-4 py-3">
+                      {p.user?.nome} {p.user?.cognome}
+                    </td>
+                    <td className="px-4 py-3">
+                      #{p.ombrellone?.numero} - Fila {p.ombrellone?.fila}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {new Date(p.dataInizio).toLocaleDateString('it-IT')} - 
+                      {new Date(p.dataFine).toLocaleDateString('it-IT')}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        p.stato === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
+                        p.stato === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                        p.stato === 'PAID' ? 'bg-blue-100 text-blue-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {p.stato}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-center text-gray-500 py-8">Nessuna prenotazione recente</p>
+        )}
       </div>
     </div>
   );
