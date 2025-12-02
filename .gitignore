@@ -36,3 +36,11 @@ beach-booking-frontend/src/index.css
 beach-booking-frontend/src/main.jsx
 beach-booking-frontend/src/assets/react.svg
 src/App.jsx
+.env.development
+.env.example
+src/api/axios.js
+src/api/ombrellone.js
+src/components/auth/ProtectedRoute.js
+src/components/dashboard/DashboardLayout.jsx
+src/components/dashboard/MyPrenotazioni.jsx
+src/components/dashboard/Overview.jsx

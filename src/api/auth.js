@@ -1,13 +1,7 @@
 import axiosInstance from './axiosConfig';
 
 const authAPI = {
-  login: async (email, password) => {
-    const response = await axiosInstance.post('/auth/login', { // <-- usa axiosInstance
-      email,
-      password,
-    });
-    return response.data;
-  },
+  
 
   /**
    * Registrazione cliente
@@ -28,16 +22,21 @@ const authAPI = {
   /**
    * Ottieni utente corrente
    */
+  /*
   getCurrentUser: async () => {
     const response = await axiosInstance.get('/auth/me');
     return response.data;
   },
+  */
 
   /**
    * Logout
    */
   logout: async () => {
     const response = await axiosInstance.post('/auth/logout');
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     return response.data;
   },
 
@@ -78,6 +77,42 @@ const authAPI = {
   verifyEmail: async (token) => {
     const response = await axiosInstance.post('/auth/verify-email', { token });
     return response.data;
+  },
+
+  //integrazione 
+  /**
+   * Login
+   */
+  login: async (email, password) => {
+    const response = await axiosInstance.post('/auth/login', { email, password });
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+
+
+  /**
+   * Get current user
+   */
+  getCurrentUser: () => {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  },
+
+  /**
+   * Get token
+   */
+  getToken: () => {
+    return localStorage.getItem('token');
+  },
+
+  /**
+   * Check if authenticated
+   */
+  isAuthenticated: () => {
+    return !!localStorage.getItem('token');
   },
 };
 
