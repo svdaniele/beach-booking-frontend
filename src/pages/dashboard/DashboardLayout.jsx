@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 
 const DashboardLayout = () => {
@@ -92,9 +93,7 @@ const DashboardLayout = () => {
         </header>
 
         <div className="p-6">
-          {/* Usa <Outlet /> da react-router-dom qui nel tuo progetto */}
-          {/* import { Outlet } from 'react-router-dom'; */}
-          {/* <Outlet /> */}
+          <Outlet />
         </div>
       </main>
     </div>
