@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user, logout } = useAuth();
 
@@ -77,26 +77,24 @@ const DashboardLayout = ({ children }) => {
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main */}
       <main className="flex-1 overflow-auto">
-        {/* Top Bar */}
         <header className="bg-white shadow-sm sticky top-0 z-10">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">Benvenuto, {user?.nome}!</h1>
               <p className="text-sm text-gray-600">{user?.ruolo}</p>
             </div>
-            <div className="flex items-center gap-4">
-              <a href="/" className="text-gray-600 hover:text-gray-900">
-                🏠 Torna al sito
-              </a>
-            </div>
+            <a href="/" className="text-gray-600 hover:text-gray-900">
+              🏠 Torna al sito
+            </a>
           </div>
         </header>
 
-        {/* Page Content */}
         <div className="p-6">
-          {children}
+          {/* Usa <Outlet /> da react-router-dom qui nel tuo progetto */}
+          {/* import { Outlet } from 'react-router-dom'; */}
+          {/* <Outlet /> */}
         </div>
       </main>
     </div>
