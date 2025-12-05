@@ -15,7 +15,7 @@ import Register from './pages/auth/Register';
 // Dashboard Pages
 import Overview from './pages/dashboard/Overview';
 import Prenotazioni from './pages/dashboard/Prenotazioni';
-import PrenotazioneDetail from './pages/dashboard/PrenotazioneDetail';
+import PrenotazioniDetail from './pages/dashboard/PrenotazioniDetail';
 import MyPrenotazioni from './pages/dashboard/MyPrenotazioni';
 import Ombrelloni from './pages/dashboard/Ombrelloni';
 import Clienti from './pages/dashboard/Clienti';
@@ -52,75 +52,67 @@ const router = createBrowserRouter([
 
   // Protected Dashboard Routes
   {
-  path: '/dashboard',
-  element: (
-    <ProtectedRoute>
-      <DashboardLayout />
-    </ProtectedRoute>
-  ),
-  children: [
-    {
-      index: true,
-      element: <Overview />,
-    },
-    {
-      path: 'prenotazioni',
-      element: (
-        <ProtectedRoute requiredRole="STAFF">
-          <Prenotazioni />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: 'prenotazioni/:id',
-      element: (
-        <ProtectedRoute requiredRole="STAFF">
-          <PrenotazioneDetail />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: 'my-prenotazioni',
-      element: <MyPrenotazioni />,
-    },
-    {
-      path: 'ombrelloni',
-      element: (
-        <ProtectedRoute requiredRole="STAFF">
-          <Ombrelloni />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: 'clienti',
-      element: (
-        <ProtectedRoute requiredRole="STAFF">
-          <Clienti />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: 'pagamenti',
-      element: (
-        <ProtectedRoute requiredRole="STAFF">
-          <Pagamenti />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: 'settings',
-      element: (
-        <ProtectedRoute requiredRole="TENANT_ADMIN">
-          <Settings />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: 'profile',
-      element: <Profile />,
-    },
-  ],
-},
+    path: '/dashboard',
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Overview />,
+      },
+      {
+        path: 'prenotazioni',
+        element: (
+          <ProtectedRoute requiredRole="STAFF">
+            <Prenotazioni />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'prenotazioni/:id',
+        element: (
+          <ProtectedRoute requiredRole="STAFF">
+            <PrenotazioniDetail />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'my-prenotazioni',
+        element: <MyPrenotazioni />,
+      },
+      {
+        path: 'ombrelloni',
+        element: (
+          <ProtectedRoute requiredRole="STAFF">
+            <Ombrelloni />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'clienti',
+        element: (
+          <ProtectedRoute requiredRole="STAFF">
+            <Clienti />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'pagamenti',
+        element: <Pagamenti />,
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
+      },
+    ],
+  },
 ]);
 
 export default router;

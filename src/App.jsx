@@ -6,9 +6,11 @@ import Overview from './pages/dashboard/Overview';
 import MyPrenotazioni from './pages/dashboard/MyPrenotazioni';
 import Prenotazioni from './pages/dashboard/Prenotazioni';
 import Ombrelloni from './pages/dashboard/Ombrelloni';
-import ProtectedRoute from './components/auth/ProtectedRoute';
 import Clienti from './pages/dashboard/Clienti';
+import Pagamenti from './pages/dashboard/Pagamenti';
 import Settings from './pages/dashboard/Settings';
+import Profile from './pages/dashboard/Profile';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import useAuthStore from './store/authStore';
 
 function App() {
@@ -30,17 +32,13 @@ function App() {
               <Route path="prenotazioni" element={<Prenotazioni />} />
               <Route path="ombrelloni" element={<Ombrelloni />} />
               <Route path="clienti" element={<Clienti />} />
-              <Route path="statistiche" element={<div>Statistiche - Coming Soon</div>} />
-              <Route path="impostazioni" element={<Settings />} />
+              <Route path="pagamenti" element={<Pagamenti />} />
+              <Route path="settings" element={<Settings />} />
             </>
           )}
           
-          {!isAdmin && (
-            <>
-              <Route path="nuova-prenotazione" element={<Navigate to="/booking" replace />} />
-              <Route path="profilo" element={<div>Profilo - Coming Soon</div>} />
-            </>
-          )}
+          <Route path="profile" element={<Profile />} />
+          <Route path="my-prenotazioni" element={<MyPrenotazioni />} />
         </Route>
         
         <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl">404</h1></div>} />
