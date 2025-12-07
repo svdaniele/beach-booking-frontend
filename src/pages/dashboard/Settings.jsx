@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import settingsAPI from '../../api/settings';
+import useAuth from '../../hooks/useAuth';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [tenant, setTenant] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     loadSettings();
@@ -26,7 +28,7 @@ const Settings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await settingsAPI.updateTenantSettings(tenant);
+      await settingsAPI.updateTenantSettings(user.tenantId, tenant);
       alert('Impostazioni salvate con successo!');
     } catch (error) {
       console.error('Error saving settings:', error);

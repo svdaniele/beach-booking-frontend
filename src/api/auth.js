@@ -86,6 +86,8 @@ const authAPI = {
   login: async (email, password) => {
     const response = await axiosInstance.post('/auth/login', { email, password });
     if (response.data.token) {
+      response.data.user.tenantId = response.data.tenantId;
+
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }

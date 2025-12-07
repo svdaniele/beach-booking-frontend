@@ -5,7 +5,7 @@ const profileAPI = {
    * Ottieni profilo utente corrente
    */
   getMe: async () => {
-    const response = await axiosInstance.get('/users/me');
+    const response = await axiosInstance.get('/auth/me');
     return response.data;
   },
 
@@ -21,7 +21,7 @@ const profileAPI = {
    * Cambia password
    */
   changePassword: async (currentPassword, newPassword) => {
-    const response = await axiosInstance.put('/users/me/password', {
+    const response = await axiosInstance.put('/auth/me/password', {
       currentPassword,
       newPassword
     });
@@ -34,7 +34,7 @@ const profileAPI = {
   uploadAvatar: async (file) => {
     const formData = new FormData();
     formData.append('avatar', file);
-    const response = await axiosInstance.post('/users/me/avatar', formData, {
+    const response = await axiosInstance.post('/auth/me/avatar', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -44,7 +44,7 @@ const profileAPI = {
    * Aggiorna preferenze notifiche
    */
   updatePreferences: async (preferences) => {
-    const response = await axiosInstance.put('/users/me/preferences', preferences);
+    const response = await axiosInstance.put('/auth/me/preferences', preferences);
     return response.data;
   },
 
