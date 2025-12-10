@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 import BookingPage from './pages/public/BookingPage';
 import DashboardLayout from './pages/dashboard/DashboardLayout';
 import Overview from './pages/dashboard/Overview';
@@ -12,6 +13,12 @@ import Settings from './pages/dashboard/Settings';
 import Profile from './pages/dashboard/Profile';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import useAuthStore from './store/authStore';
+import Home from './pages/public/Home';
+import About from './pages/public/About';
+import Contact from './pages/public/Contact';
+
+// Nelle routes:
+
 
 function App() {
   const { user } = useAuthStore();
@@ -20,9 +27,14 @@ function App() {
   return (
     <div className="App">
       <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/prenota" element={<BookingPage />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/booking" element={<BookingPage />} />
+        <Route path="/register" element={<Register />} />
         
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route index element={isAdmin ? <Overview /> : <MyPrenotazioni />} />
