@@ -45,3 +45,5 @@ src/components/dashboard/DashboardLayout.jsx
 src/components/dashboard/MyPrenotazioni.jsx
 src/components/dashboard/Overview.jsx
 src/components/auth/ProtectedRoute.js
+bun.lock
+.orchids/orchids.json
